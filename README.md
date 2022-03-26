@@ -45,8 +45,6 @@ jobs:
 | `FILES_PRIVATE` | Make files private, default `false`. | `env` | No | `false` |
 | `ADD_HEADER` | Add custom header for sync files, e.g. `Content-Encoding: gzip`. | `env` | No | N/A |
 
-https://docs.digitalocean.com/products/spaces/resources/s3cmd-usage/
-
 
 ### License
 

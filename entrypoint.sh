@@ -12,6 +12,14 @@ if [ -z "$SPACE_REGION" ]; then
   exit 1
 fi
 
+DATACENTERS="nyc1 nyc2 nyc3 ams2 ams3 sfo1 sfo2 sfo3 sgp1 lon1 fra1 tor1 blr1"
+
+if ! echo -n " $DATACENTERS" | grep -q " ${SPACE_REGION} "; then
+    echo "WARNING: Unknown datacenter region '$SPACE_REGION'."
+    echo "> List of known datacenters: $DATACENTERS"
+    exit 1
+fi
+
 ENDPOINT="$SPACE_REGION.digitaloceanspaces.com"
 
 if [ -z "$SPACE_ACCESS_KEY" ]; then
@@ -38,7 +46,13 @@ if [ -n "$ADD_HEADER" ]; then
   HEADER_FLAG="--add-header $ADD_HEADER"
 fi
 
-sed -e "s|\[\[access_key\]\]|${SPACE_ACCESS_KEY}|" -e "s|\[\[secret_key\]\]|${SPACE_SECRET_KEY}|" -e "s|\[\[region\]\]|${SPACE_REGION}|" /root/.s3cfg.temp > /github/home/.s3cfg
+cat >> /.s3cfg <<CONFIG
+access_key = ${SPACE_ACCESS_KEY}
+secret_key = ${SPACE_SECRET_KEY}
+bucket_location = ${SPACE_REGION}
+host_base = ${ENDPOINT}
+host_bucket = %(bucket).${ENDPOINT}
+CONFIG
 
 s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
   ${ACCESS_FLAG} \
@@ -46,6 +60,4 @@ s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
   --no-progress \
   --exclude=".git/*" \
   ${DELETE_FLAG} \
-  ${HEADER_FLAG} \
-  --host=${ENDPOINT} \
-  --host-bucket=%(bucket)s.${ENDPOINT}
+  ${HEADER_FLAG}
