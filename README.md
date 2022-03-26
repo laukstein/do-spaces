@@ -17,8 +17,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - uses: laukstein/do-spaces@master
+    - uses: actions/checkout@main
+    - uses: laukstein/do-spaces@main
       with:
         args: --acl public-read --follow-symlinks --exclude ".git/*"
       env:
