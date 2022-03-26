@@ -38,12 +38,7 @@ if [ -n "$ADD_HEADER" ]; then
   HEADER_FLAG="--add-header $ADD_HEADER"
 fi
 
-local s3cnf="$HOME/.s3cfg"
-echo "[default]" > "$s3cnf"
-echo "access_key=$SPACE_ACCESS_KEY" >> "$s3cnf"
-echo "secret_key=$SPACE_SECRET_KEY" >> "$s3cnf"
-echo "region=$SPACE_REGION" >> "$s3cnf"
-
+sed -e "s|\[\[access_key\]\]|${SPACE_ACCESS_KEY}|" -e "s|\[\[secret_key\]\]|${SPACE_SECRET_KEY}|" -e "s|\[\[region\]\]|${SPACE_REGION}|" /root/.s3cfg.temp > /github/home/.s3cfg
 
 s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
   ${ACCESS_FLAG} \
@@ -56,5 +51,3 @@ s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
   --ssl \
   --host=${ENDPOINT} \
   --host-bucket=%(bucket)s.${ENDPOINT}
-
-rm "$HOME/.s3cfg"
