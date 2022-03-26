@@ -12,13 +12,13 @@ if [ -z "$SPACE_REGION" ]; then
   exit 1
 fi
 
-if [ -z "$SPACE_ACCESS_KEY_ID" ]; then
-  echo "SPACE_ACCESS_KEY_ID is not set. Quitting."
+if [ -z "$SPACE_ACCESS_KEY" ]; then
+  echo "SPACE_ACCESS_KEY is not set. Quitting."
   exit 1
 fi
 
-if [ -z "$SPACE_SECRET_ACCESS_KEY" ]; then
-  echo "SPACE_SECRET_ACCESS_KEY is not set. Quitting."
+if [ -z "$SPACE_SECRET_KEY" ]; then
+  echo "SPACE_SECRET_KEY is not set. Quitting."
   exit 1
 fi
 
@@ -31,8 +31,8 @@ if [ -n "$ADD_HEADER" ]; then
 fi
 
 aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-${SPACE_ACCESS_KEY_ID}
-${SPACE_SECRET_ACCESS_KEY}
+${SPACE_ACCESS_KEY}
+${SPACE_SECRET_KEY}
 ${SPACE_REGION}
 text
 EOF
