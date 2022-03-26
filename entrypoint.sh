@@ -40,6 +40,5 @@ s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
   --follow-symlinks \
   --exclude=".git/*" \
   ${DELETE_FLAG} \
-  ${HEADER_FLAG} \
-  --endpoint-url https://${SPACE_REGION}.digitaloceanspaces.com $*
+  ${HEADER_FLAG}
 
