@@ -49,12 +49,6 @@ jobs:
 | `ADD_HEADER` | Add custom header for sync files, e.g. `Content-Encoding: gzip`. | `env` | No | N/A |
 
 
-### Credits
-
-* https://github.com/jakejarvis/s3-sync-action
-* https://github.com/idlefingers/do-space-sync-action
-
-
 ### License
 
 This project is distributed under the [MIT license](LICENSE.md).

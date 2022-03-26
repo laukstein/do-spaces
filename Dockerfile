@@ -1,15 +1,7 @@
-FROM python:3.10.3-alpine
+FROM python:3.8-alpine
 
-RUN apk update
-RUN apk add tar sed ca-certificates
-RUN pip install python-dateutil
-
-ENV AWSCLI_VERSION='1.22.76'
-
-ARG DEBIAN_FRONTEND=noninteractive
-ARG DEBCONF_NOWARNINGS="yes"
-
-RUN pip install --upgrade --quiet --no-cache-dir awscli==${AWSCLI_VERSION}
+RUN apk add --update bash libmagic && \
+    python -m pip install --quiet --no-cache-dir s3cmd python-dateutil python-magic
 
 ADD entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

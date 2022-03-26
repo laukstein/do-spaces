@@ -39,8 +39,8 @@ EOF
 
 sh -c "s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
               --profile s3-sync-action \
-              --no-progress \
               --no-preserve \
+              --no-progress \
               ${DELETE_FLAG} \
               ${HEADER_FLAG} \
               --endpoint-url https://${SPACE_REGION}.digitaloceanspaces.com $*"
