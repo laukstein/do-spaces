@@ -12,6 +12,8 @@ if [ -z "$SPACE_REGION" ]; then
   exit 1
 fi
 
+ENDPOINT="$SPACE_REGION.digitaloceanspaces.com"
+
 if [ -z "$SPACE_ACCESS_KEY" ]; then
   echo "SPACE_ACCESS_KEY is not set. Quitting."
   exit 1
@@ -26,18 +28,33 @@ if [ -z "$DELETE_UNTRACKED" ] || [ "$DELETE_UNTRACKED" == "true" ]; then
 	DELETE_FLAG="--delete-removed"
 fi
 
+if [ -z "$FILES_PRIVATE" ] || [ "$FILES_PRIVATE" != "true" ]; then
+	ACCESS_FLAG="--acl-public"
+else
+  ACCESS_FLAG="--acl-private"
+fi
+
 if [ -n "$ADD_HEADER" ]; then
   HEADER_FLAG="--add-header $ADD_HEADER"
 fi
 
+local s3cnf="$HOME/.s3cfg"
+echo "[default]" > "$s3cnf"
+echo "access_key=$SPACE_ACCESS_KEY" >> "$s3cnf"
+echo "secret_key=$SPACE_SECRET_KEY" >> "$s3cnf"
+echo "region=$SPACE_REGION" >> "$s3cnf"
+
+
 s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
-  --access_key=${SPACE_ACCESS_KEY} \
-  --secret_key=${SPACE_SECRET_KEY} \
-  --region=${SPACE_REGION} \
-  --acl-public \
+  ${ACCESS_FLAG} \
   --no-preserve \
   --no-progress \
   --follow-symlinks \
   --exclude=".git/*" \
   ${DELETE_FLAG} \
-  ${HEADER_FLAG}
+  ${HEADER_FLAG} \
+  --ssl \
+  --host=${ENDPOINT} \
+  --host-bucket=%(bucket)s.${ENDPOINT}
+
+rm "$HOME/.s3cfg"

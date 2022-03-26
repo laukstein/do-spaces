@@ -30,8 +30,6 @@ jobs:
         ADD_HEADER: "Content-Encoding: gzip"
 ```
 
-`--exclude ".git/*` will exclude `.git` directory from deployed on space.
-
 
 ### Required Variables
 
@@ -44,7 +42,10 @@ jobs:
 | `SPACE_DIR` | The directory inside of the space you wish to sync to. For example, `my_project`. Defaults to the root of the space. | `env` | No | `/` |
 | `SOURCE_DIR` | The local directory you wish to sync. For example, `public`. Defaults to your entire repository. | `env` | No | `/` |
 | `DELETE_UNTRACKED` | If empty or set to `true`, deletes any files in the space that are *not* present in the source directory. | `env` | No | `true` |
+| `FILES_PRIVATE` | Make files private, default `false`. | `env` | No | `false` |
 | `ADD_HEADER` | Add custom header for sync files, e.g. `Content-Encoding: gzip`. | `env` | No | N/A |
+
+https://docs.digitalocean.com/products/spaces/resources/s3cmd-usage/
 
 
 ### License
