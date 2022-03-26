@@ -30,27 +30,16 @@ if [ -n "$ADD_HEADER" ]; then
   HEADER_FLAG="--add-header $ADD_HEADER"
 fi
 
-aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-${SPACE_ACCESS_KEY}
-${SPACE_SECRET_KEY}
-${SPACE_REGION}
-text
-EOF
+s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
+  --access_key=${SPACE_ACCESS_KEY} \
+  --secret_key=${SPACE_SECRET_KEY} \
+  --region=${SPACE_REGION} \
+  --acl-public \
+  --no-preserve \
+  --no-progress \
+  --follow-symlinks \
+  --exclude=".git/*" \
+  ${DELETE_FLAG} \
+  ${HEADER_FLAG} \
+  --endpoint-url https://${SPACE_REGION}.digitaloceanspaces.com $*
 
-sh -c "s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
-              --profile s3-sync-action \
-              --acl-public \
-              --no-preserve \
-              --no-progress \
-              --follow-symlinks \
-              --exclude=".git/*" \
-              ${DELETE_FLAG} \
-              ${HEADER_FLAG} \
-              --endpoint-url https://${SPACE_REGION}.digitaloceanspaces.com $*"
-
-aws configure --profile s3-sync-action <<-EOF > /dev/null 2>&1
-null
-null
-null
-text
-EOF
