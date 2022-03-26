@@ -1,16 +1,16 @@
-# DigitalOcean Spaces Sync Action
+# DigitalOcean Spaces
 
-GitHub Action to sync content into repository-specific directory within a DigitalOcean Space, while respecting directory structure.
+GitHub Action to sync to DigitalOcean Spaces.
 
-**⚠️ Note:** Performing this action by default deletes any files in the space that are not present in `SOURCE_DIR`. Can disable under `DELETE_UNTRACKED`.
+**⚠️ Note:** This action by default deletes all files in the space that are not present in `SOURCE_DIR`, disable using `DELETE_UNTRACKED`.
 
 
 ### Usage
 
-Setup this workflow action with file like `.github/workflows/<name_this>.yml`
+Setup this workflow action like `.github/workflows/<name_this>.yml`
 
 ```yaml
-name: DigitalOcean Spaces deployment
+name: DigitalOcean Spaces
 on: push
 
 jobs:
@@ -32,6 +32,9 @@ jobs:
         ADD_HEADER: "Content-Encoding: gzip"
 ```
 
+`--exclude ".git/*` will exclude `.git` directory from deployed on space.
+
+
 ### Required Variables
 
 | Key | Value | Suggested Type | Required | Default |
@@ -40,10 +43,10 @@ jobs:
 | `SPACE_SECRET_ACCESS_KEY` | Your Spaces Secret Access Key. [More info here.](https://www.digitalocean.com/community/tutorials/how-to-create-a-digitalocean-space-and-api-key) | `secret env` | **Yes** | N/A |
 | `SPACE_REGION` | The region where you created your space in. For example, `ams3`. [Full list of regions here.](https://www.digitalocean.com/docs/platform/availability-matrix/) | `env` | **Yes** | N/A |
 | `SPACE_NAME` | The name of the space you're syncing to. For example, `my-space`. | `secret env` | **Yes** | N/A |
-| `SPACE_DIR` | The directory inside of the space you wish to sync/upload to. For example, `my_project`. Defaults to the root of the space. | `env` | No | `/` |
-| `SOURCE_DIR` | The local directory you wish to sync/upload. For example, `public`. Defaults to your entire repository. | `env` | No | `/` |
+| `SPACE_DIR` | The directory inside of the space you wish to sync to. For example, `my_project`. Defaults to the root of the space. | `env` | No | `/` |
+| `SOURCE_DIR` | The local directory you wish to sync. For example, `public`. Defaults to your entire repository. | `env` | No | `/` |
 | `DELETE_UNTRACKED` | If empty or set to `true`, deletes any files in the space that are *not* present in the source directory. | `env` | No | `true` |
-| `ADD_HEADER` | Add custom header for sync/uploaded files, e.g. `Content-Encoding: gzip`. | `env` | No | N/A |
+| `ADD_HEADER` | Add custom header for sync files, e.g. `Content-Encoding: gzip`. | `env` | No | N/A |
 
 
 ### Credits

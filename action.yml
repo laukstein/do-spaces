@@ -1,5 +1,5 @@
-name: "DigitalOcean Spaces Sync Action"
-description: "Sync a directory to a DigitalOcean Space"
+name: "DigitalOcean Spaces"
+description: "Sync to DigitalOcean Spaces"
 author: laukstein
 runs:
   using: "docker"
