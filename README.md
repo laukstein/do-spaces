@@ -1,0 +1,57 @@
+# DigitalOcean Spaces Sync Action
+
+GitHub Action to sync content into repository-specific directory within a DigitalOcean Space, while respecting directory structure.
+
+**⚠️ Note:** Performing this action by default deletes any files in the space that are not present in `SOURCE_DIR`. Can disable under `DELETE_UNTRACKED`.
+
+
+### Usage
+
+Setup this workflow action with file like `.github/workflows/<name_this>.yml`
+
+```yaml
+name: DigitalOcean Spaces deployment
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: laukstein/do-spaces@master
+      with:
+        args: --acl public-read --follow-symlinks --exclude ".git/*"
+      env:
+        SPACE_ACCESS_KEY: ${{ secrets.SPACE_ACCESS_KEY }}
+        SPACE_SECRET_KEY: ${{ secrets.SPACE_SECRET_KEY }}
+        SPACE_REGION: "ams3"
+        SPACE_NAME: ${{ secrets.SPACE_NAME }}
+        SPACE_DIR: my_project
+        SOURCE_DIR: public
+        DELETE_UNTRACKED: true
+        ADD_HEADER: "Content-Encoding: gzip"
+```
+
+### Required Variables
+
+| Key | Value | Suggested Type | Required | Default |
+| ------------- | ------------- | ------------- | --------- | --------- |
+| `SPACE_ACCESS_KEY_ID` | Your Spaces Access Key. [More info here.](https://www.digitalocean.com/community/tutorials/how-to-create-a-digitalocean-space-and-api-key) | `secret env` | **Yes** | N/A |
+| `SPACE_SECRET_ACCESS_KEY` | Your Spaces Secret Access Key. [More info here.](https://www.digitalocean.com/community/tutorials/how-to-create-a-digitalocean-space-and-api-key) | `secret env` | **Yes** | N/A |
+| `SPACE_REGION` | The region where you created your space in. For example, `ams3`. [Full list of regions here.](https://www.digitalocean.com/docs/platform/availability-matrix/) | `env` | **Yes** | N/A |
+| `SPACE_NAME` | The name of the space you're syncing to. For example, `my-space`. | `secret env` | **Yes** | N/A |
+| `SPACE_DIR` | The directory inside of the space you wish to sync/upload to. For example, `my_project`. Defaults to the root of the space. | `env` | No | `/` |
+| `SOURCE_DIR` | The local directory you wish to sync/upload. For example, `public`. Defaults to your entire repository. | `env` | No | `/` |
+| `DELETE_UNTRACKED` | If empty or set to `true`, deletes any files in the space that are *not* present in the source directory. | `env` | No | `true` |
+| `ADD_HEADER` | Add custom header for sync/uploaded files, e.g. `Content-Encoding: gzip`. | `env` | No | N/A |
+
+
+### Credits
+
+* https://github.com/jakejarvis/s3-sync-action
+* https://github.com/idlefingers/do-space-sync-action
+
+
+### License
+
+This project is distributed under the [MIT license](LICENSE.md).

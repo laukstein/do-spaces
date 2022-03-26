@@ -1,0 +1,9 @@
+name: "DigitalOcean Spaces Sync Action"
+description: "Sync a directory to a DigitalOcean Space"
+author: laukstein
+runs:
+  using: "docker"
+  image: "Dockerfile"
+branding:
+  icon: "droplet"
+  color: "blue"
