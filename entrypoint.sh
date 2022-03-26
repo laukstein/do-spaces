@@ -22,7 +22,7 @@ if [ -z "$SPACE_SECRET_KEY" ]; then
   exit 1
 fi
 
-if [ -z "$DELETE_UNTRACKED" || "$DELETE_UNTRACKED" == "true" ]; then
+if [ -z "$DELETE_UNTRACKED" ] || [ "$DELETE_UNTRACKED" == "true" ]; then
 	DELETE_FLAG="--delete-removed"
 fi
 
@@ -39,8 +39,11 @@ EOF
 
 sh -c "s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
               --profile s3-sync-action \
+              --acl-public \
               --no-preserve \
               --no-progress \
+              --follow-symlinks \
+              --exclude=".git/*" \
               ${DELETE_FLAG} \
               ${HEADER_FLAG} \
               --endpoint-url https://${SPACE_REGION}.digitaloceanspaces.com $*"

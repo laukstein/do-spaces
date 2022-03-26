@@ -19,8 +19,6 @@ jobs:
     steps:
     - uses: actions/checkout@main
     - uses: laukstein/do-spaces@main
-      with:
-        args: --acl public-read --follow-symlinks --exclude ".git/*"
       env:
         SPACE_ACCESS_KEY: ${{ secrets.SPACE_ACCESS_KEY }}
         SPACE_SECRET_KEY: ${{ secrets.SPACE_SECRET_KEY }}
