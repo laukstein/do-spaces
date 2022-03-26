@@ -41,4 +41,3 @@ s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
   --exclude=".git/*" \
   ${DELETE_FLAG} \
   ${HEADER_FLAG}
-
