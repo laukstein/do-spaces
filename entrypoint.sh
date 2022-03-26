@@ -23,7 +23,7 @@ if [ -z "$SPACE_SECRET_KEY" ]; then
 fi
 
 if [ -z "$DELETE_UNTRACKED" || "$DELETE_UNTRACKED" == "true" ]; then
-	DELETE_FLAG="--delete"
+	DELETE_FLAG="--delete-removed"
 fi
 
 if [ -n "$ADD_HEADER" ]; then
@@ -37,9 +37,10 @@ ${SPACE_REGION}
 text
 EOF
 
-sh -c "aws s3 sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
+sh -c "s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
               --profile s3-sync-action \
               --no-progress \
+              --no-preserve \
               ${DELETE_FLAG} \
               ${HEADER_FLAG} \
               --endpoint-url https://${SPACE_REGION}.digitaloceanspaces.com $*"
