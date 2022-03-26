@@ -44,10 +44,8 @@ s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
   ${ACCESS_FLAG} \
   --no-preserve \
   --no-progress \
-  --follow-symlinks \
   --exclude=".git/*" \
   ${DELETE_FLAG} \
   ${HEADER_FLAG} \
-  --ssl \
   --host=${ENDPOINT} \
   --host-bucket=%(bucket)s.${ENDPOINT}
