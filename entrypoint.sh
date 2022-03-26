@@ -46,7 +46,7 @@ if [ -n "$ADD_HEADER" ]; then
   HEADER_FLAG="--add-header $ADD_HEADER"
 fi
 
-cat >> /.s3cfg <<CONFIG
+cat >> /github/home/.s3cfg <<CONFIG
 access_key = ${SPACE_ACCESS_KEY}
 secret_key = ${SPACE_SECRET_KEY}
 bucket_location = ${SPACE_REGION}
