@@ -60,10 +60,4 @@ host_base = ${ENDPOINT}
 host_bucket = %(bucket).${ENDPOINT}
 CONFIG
 
-s3cmd sync ${FILES_SOURCE_DIR} s3://${SPACE_NAME}/${SPACE_DIR} \
-  ${ACCESS_FLAG} \
-  --no-preserve \
-  --no-progress \
-  --exclude=".git/*" \
-  ${DELETE_FLAG} \
-  ${HEADER_FLAG}
+s3cmd --no-preserve --no-progress --exclude=".git/*" ${DELETE_FLAG} ${ACCESS_FLAG} ${HEADER_FLAG} sync ${FILES_SOURCE_DIR} s3://${SPACE_NAME}/${SPACE_DIR}
