@@ -49,7 +49,7 @@ else
 fi
 
 if [ -n "$ADD_HEADER" ]; then
-  HEADER_FLAG="--add-header $ADD_HEADER"
+  HEADER_FLAG="--add-header=\"$ADD_HEADER\""
 fi
 
 cat >> $HOME/.s3cfg <<CONFIG
