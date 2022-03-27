@@ -27,7 +27,7 @@ jobs:
         SPACE_DIR: my_project
         SOURCE_DIR: public
         DELETE_UNTRACKED: true
-        ADD_HEADER: "Content-Encoding: gzip"
+        ADD_HEADER: "Content-Encoding:gzip"
 ```
 
 
@@ -43,7 +43,7 @@ jobs:
 | `SOURCE_DIR` | The local directory you wish to sync. For example, `public`. Defaults to your entire repository. | `env` | No | `/` |
 | `DELETE_UNTRACKED` | If empty or set to `true`, deletes any files in the space that are *not* present in the source directory. | `env` | No | `true` |
 | `FILES_PRIVATE` | Make files private, default `false`. | `env` | No | `false` |
-| `ADD_HEADER` | Add custom header for sync files, e.g. `Content-Encoding: gzip`. | `env` | No | N/A |
+| `ADD_HEADER` | Add custom header for sync files, e.g. `Content-Encoding:gzip`, ensure it doesn't contain space/s. | `env` | No | N/A |
 
 
 ### License
