@@ -36,6 +36,12 @@ if [ -z "$DELETE_UNTRACKED" ] || [ "$DELETE_UNTRACKED" == "true" ]; then
 	DELETE_FLAG="--delete-removed"
 fi
 
+if [ -z "$SOURCE_DIR" ]; then
+  FILES_SOURCE_DIR="./*"
+else
+  FILES_SOURCE_DIR="./$SOURCE_DIR/"
+fi
+
 if [ -z "$FILES_PRIVATE" ] || [ "$FILES_PRIVATE" != "true" ]; then
 	ACCESS_FLAG="--acl-public"
 else
@@ -54,7 +60,7 @@ host_base = ${ENDPOINT}
 host_bucket = %(bucket).${ENDPOINT}
 CONFIG
 
-s3cmd sync ${SOURCE_DIR:-.} s3://${SPACE_NAME}/${SPACE_DIR} \
+s3cmd sync ${FILES_SOURCE_DIR} s3://${SPACE_NAME}/${SPACE_DIR} \
   ${ACCESS_FLAG} \
   --no-preserve \
   --no-progress \
