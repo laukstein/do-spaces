@@ -109,7 +109,7 @@ if [ -n "$CHANGES" ]; then
         --header "Content-Type: application/json" \
         --header "Authorization: Bearer $DO_TOKEN" \
         --url "https://api.digitalocean.com/v2/cdn/endpoints/$DO_CDN_ID/cache" \
-        --data '{"files": $DO_FILES}'`
+        --data "{\"files\": $DO_FILES}"`
 
       if [ $RESPONSE == "200" ]; then
           echo "CDN purge success"
