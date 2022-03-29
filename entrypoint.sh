@@ -84,38 +84,37 @@ if [ -n "$CHANGES" ]; then
   fi
 
   DO_FILES=""
-  REMOVE_PATH=${LOCAL_DIR//.\/}
+  REMOVE_PATH=${LOCAL_DIR#./}
   for file in ${CHANGES}; do
-      [ -n "$DO_FILES" ] && DO_FILES+=", "
-      DO_FILES+="\"${file#"$REMOVE_PATH"}\""
+      if [ -n "$DO_FILES" ]; then
+        DO_FILES="$DO_FILES, ";
+      fi
+      DO_FILES="$DO_FILES\"${file#"$REMOVE_PATH"}\""
   done
+  DO_FILES="[$DO_FILES]"
 
-  if [ -n "$DO_FILES" ]; then
-    DO_FILES="[$DO_FILES]"
+  ENDPOINTS=`curl --request GET \
+    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer $DO_TOKEN" \
+    --url "https://api.digitalocean.com/v2/cdn/endpoints"`
 
-    ENDPOINTS=`curl --request GET \
-      --header "Content-Type: application/json" \
-      --header "Authorization: Bearer $DO_TOKEN" \
-      --url "https://api.digitalocean.com/v2/cdn/endpoints"`
+  if [ -n "$ENDPOINTS" ]; then
+    DO_CDN_ID=${{ fromJSON($ENDPOINTS).endpoints[0].id }}
 
-    if [ -n "$ENDPOINTS" ]; then
-      DO_CDN_ID=${{ fromJSON($ENDPOINTS).endpoints[0].id }}
+    if [ -n "$DO_CDN_ID" ]; then
+      RESPONSE=`curl --write-out '%{http_code}' \
+        --silent \
+        --output /dev/null \
+        --request DELETE \
+        --header "Content-Type: application/json" \
+        --header "Authorization: Bearer $DO_TOKEN" \
+        --url "https://api.digitalocean.com/v2/cdn/endpoints/$DO_CDN_ID/cache" \
+        --data '{"files": $DO_FILES}'`
 
-      if [ -n "$DO_CDN_ID" ]; then
-        RESPONSE=`curl --write-out '%{http_code}' \
-          --silent \
-          --output /dev/null \
-          --request DELETE \
-          --header "Content-Type: application/json" \
-          --header "Authorization: Bearer $DO_TOKEN" \
-          --url "https://api.digitalocean.com/v2/cdn/endpoints/$DO_CDN_ID/cache" \
-          --data '{"files": $DO_FILES}'`
-
-        if [ $RESPONSE == "200" ]; then
-            echo "CDN purge success"
-        else
-            echo "CDN purge failure"
-        fi
+      if [ $RESPONSE == "200" ]; then
+          echo "CDN purge success"
+      else
+          echo "CDN purge failure"
       fi
     fi
   fi
