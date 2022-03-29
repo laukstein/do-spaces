@@ -91,7 +91,6 @@ if [ -n "$CHANGES" ]; then
       fi
       DO_FILES="$DO_FILES\"${file#"$REMOVE_PATH"}\""
   done
-  DO_FILES="[$DO_FILES]"
 
   ENDPOINTS=`curl --request GET \
     --header "Content-Type: application/json" \
@@ -109,7 +108,7 @@ if [ -n "$CHANGES" ]; then
         --header "Content-Type: application/json" \
         --header "Authorization: Bearer $DO_TOKEN" \
         --url "https://api.digitalocean.com/v2/cdn/endpoints/$DO_CDN_ID/cache" \
-        --data "{\"files\": $DO_FILES}"`
+        --data "{\"files\": [$DO_FILES]}"`
 
       if [ $RESPONSE == "200" ]; then
           echo "CDN purge success"
