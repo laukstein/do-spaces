@@ -110,7 +110,7 @@ if [ -n "$CHANGES" ]; then
         --url "https://api.digitalocean.com/v2/cdn/endpoints/$DO_CDN_ID/cache" \
         --data "{\"files\": [$DO_FILES]}"`
 
-      if [ $RESPONSE == "200" ]; then
+      if [ "$RESPONSE" == "200" ]; then
           echo "CDN purge success"
       else
           echo "CDN purge failure"
