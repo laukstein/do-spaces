@@ -2,6 +2,16 @@
 
 set -e
 
+if [ -z "$DO_ACCESS" ]; then
+  echo "DO_ACCESS is not set. Quitting."
+  exit 1
+fi
+
+if [ -z "$DO_SECRET" ]; then
+  echo "DO_SECRET is not set. Quitting."
+  exit 1
+fi
+
 if [ -z "$DO_NAME" ]; then
   echo "DO_NAME is not set. Quitting."
   exit 1
@@ -21,16 +31,6 @@ if ! echo -n " $DATACENTERS" | grep -q " ${DO_REGION} "; then
 fi
 
 ENDPOINT="$DO_REGION.digitaloceanspaces.com"
-
-if [ -z "$DO_ACCESS" ]; then
-  echo "DO_ACCESS is not set. Quitting."
-  exit 1
-fi
-
-if [ -z "$DO_SECRET" ]; then
-  echo "DO_SECRET is not set. Quitting."
-  exit 1
-fi
 
 if [ -z "$DELETE_UNTRACKED" ] || [ "$DELETE_UNTRACKED" == "true" ]; then
 	DELETE_FLAG="--delete-removed"
@@ -66,4 +66,57 @@ host_base = ${ENDPOINT}
 host_bucket = %(bucket).${ENDPOINT}
 CONFIG
 
+# Update changes in DigitalOcean Space
 s3cmd --no-preserve --no-check-md5 --no-progress --recursive --exclude=.git ${DELETE_FLAG} ${ACCESS_FLAG} ${HEADER_FLAG} sync ${LOCAL_DIR} s3://${DO_NAME}/${SPACE_DIR}
+
+
+# Purge changes from DigitalOcean CDN
+if [ -n "$DO_TOKEN" ]; then
+  if [ -z "$CHANGES" ]; then
+    echo "Missing CHANGES to purge CDN cache."
+    exit 1
+  fi
+fi
+if [ -n "$CHANGES" ]; then
+  if [ -z "$DO_TOKEN" ]; then
+    echo "Missing DO_TOKEN to purge CDN cache."
+    exit 1
+  fi
+
+  DO_FILES=""
+  REMOVE_PATH=${LOCAL_DIR//.\/}
+  for file in ${CHANGES}; do
+      [ -n "$DO_FILES" ] && DO_FILES+=", "
+      DO_FILES+="\"${file#"$REMOVE_PATH"}\""
+  done
+
+  if [ -n "$DO_FILES" ]; then
+    DO_FILES="[$DO_FILES]"
+
+    ENDPOINTS=`curl --request GET \
+      --header "Content-Type: application/json" \
+      --header "Authorization: Bearer $DO_TOKEN" \
+      --url "https://api.digitalocean.com/v2/cdn/endpoints"`
+
+    if [ -n "$ENDPOINTS" ]; then
+      DO_CDN_ID=${{ fromJSON($ENDPOINTS).endpoints[0].id }}
+
+      if [ -n "$DO_CDN_ID" ]; then
+        RESPONSE=`curl --write-out '%{http_code}' \
+          --silent \
+          --output /dev/null \
+          --request DELETE \
+          --header "Content-Type: application/json" \
+          --header "Authorization: Bearer $DO_TOKEN" \
+          --url "https://api.digitalocean.com/v2/cdn/endpoints/$DO_CDN_ID/cache" \
+          --data '{"files": $DO_FILES}'`
+
+        if [ $RESPONSE == "200" ]; then
+            echo "CDN purge success"
+        else
+            echo "CDN purge failure"
+        fi
+      fi
+    fi
+  fi
+fi
