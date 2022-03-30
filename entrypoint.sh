@@ -78,35 +78,29 @@ if [ -n "$CHANGES" ]; then
   REMOVE_PATH=${LOCAL_DIR#./}
   for file in ${CHANGES}; do
       if [ -n "$DO_FILES" ]; then
-        DO_FILES="$DO_FILES, ";
+        DO_FILES="$DO_FILES,";
       fi
       DO_FILES="$DO_FILES\"${file#"$REMOVE_PATH"}\""
   done
 
-  ENDPOINTS=$(curl --silent \
-    --request GET \
-    --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $DO_TOKEN" \
-    --url 'https://api.digitalocean.com/v2/cdn/endpoints')
+  ENDPOINT_ID=$(curl -s -X GET \
+    -H 'Content-Type: application/json' \
+    -H "Authorization: Bearer $DO_TOKEN" \
+    'https://api.digitalocean.com/v2/cdn/endpoints' | jq -r '.endpoints[0].id')
 
-  if [ -n "$ENDPOINTS" ]; then
-    DO_CDN_ID=$(echo "$ENDPOINTS" | jq -r '.endpoints[0].id')
+  if [ "$ENDPOINT_ID" != 'null' ]; then
+    HTTP_STATUS=$(curl -w "%{http_code}" -o /dev/null -s -X DELETE \
+      -H 'Content-Type: application/json' \
+      -H "Authorization: Bearer $DO_TOKEN" \
+      -d '{"files": ['"$DO_FILES"']}' \
+      "https://api.digitalocean.com/v2/cdn/endpoints/$ENDPOINT_ID/cache")
 
-    if [ -n "$DO_CDN_ID" ]; then
-      RESPONSE=$(curl --write-out '%{http_code}' \
-        --silent \
-        --output /dev/null \
-        --request DELETE \
-        --header 'Content-Type: application/json' \
-        --header "Authorization: Bearer $DO_TOKEN" \
-        --url "https://api.digitalocean.com/v2/cdn/endpoints/$DO_CDN_ID/cache" \
-        --data "{\"files\": [$DO_FILES]}")
-
-      if [ "$RESPONSE" = '200' ]; then
-          echo 'CDN purge success'
-      else
-          echo 'CDN purge failure'
-      fi
+    if [ "$HTTP_STATUS" = '200' ] || [ "$HTTP_STATUS" = '204' ]; then
+        echo 'CDN purge success'
+    else
+        echo 'CDN purge failure'
     fi
+  else
+    echo 'Failed to fetch DigitalOcean endpoints, check your DO_TOKEN'
   fi
 fi
