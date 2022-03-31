@@ -1,6 +1,6 @@
 # DigitalOcean Spaces Action
 
-GitHub Action to sync on DigitalOcean Spaces, purge changes from DigitalOcean CDN and Cloudflare cache.
+GitHub Action to sync DigitalOcean Spaces, purge changes from DigitalOcean CDN and Cloudflare cache.
 
 ⚠️ Set `DELETE_UNTRACKED: false` if you wish to keep files in space that are not present in `LOCAL_DIR`.
 
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
-      - name: Sync on DigitalOcean Space
+      - name: Sync DigitalOcean Spac
         uses: laukstein/do-spaces@main
         env:
           DO_ACCESS: ${{ secrets.DO_ACCESS }}
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@main
         with:
           fetch-depth: 0
-      - name: Sync on DigitalOcean Space, purge changes from DigitalOcean CDN
+      - name: Sync DigitalOcean Spac, purge changes from the CDN
         uses: laukstein/do-spaces@main
         env:
           DO_TOKEN: ${{ secrets.DO_TOKEN }}
@@ -66,7 +66,7 @@ jobs:
         uses: actions/checkout@main
         with:
           fetch-depth: 0
-      - name: Sync on DigitalOcean Spaces, purge changes from DigitalOcean CDN and Cloudflare cache
+      - name: Sync DigitalOcean Space, purge changes from the CDN and Cloudflare cache
         uses: laukstein/do-spaces@main
         env:
           DO_TOKEN: ${{ secrets.DO_TOKEN }}
