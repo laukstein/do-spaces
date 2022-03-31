@@ -30,7 +30,9 @@ else
   ACCESS_FLAG='--acl-private'
 fi
 
-if [ -n "$ADD_HEADER" ]; then
+if [ -z "$ADD_HEADER" ]; then
+  HEADER_FLAG=""
+else
   HEADER_FLAG="--add-header=$ADD_HEADER"
 fi
 
@@ -56,9 +58,9 @@ host_bucket = %(bucket).${ENDPOINT}
 CONFIG
 
 S3="s3://$DO_NAME/"
-UPDATES=$(s3cmd --no-preserve --no-check-md5 --no-progress --recursive --exclude=.git $DELETE_FLAG $ACCESS_FLAG "$HEADER_FLAG" sync $LOCAL_DIR "$S3$SPACE_DIR")
-echo 'Changes were successfully updated in DigitalOcean Space'
+UPDATES=$(s3cmd --no-preserve --no-check-md5 --no-progress --recursive --exclude=.git $DELETE_FLAG $ACCESS_FLAG $HEADER_FLAG sync $LOCAL_DIR $S3$SPACE_DIR)
 echo "$UPDATES"
+echo 'Changes were successfully updated in DigitalOcean Space'
 
 CHANGES=$(echo "$UPDATES" | grep -Po "(?<=${S3})[^']*")
 
@@ -85,8 +87,8 @@ if [ -n "$DO_TOKEN" ] && [ -n "$CHANGES" ]; then
       "https://api.digitalocean.com/v2/cdn/endpoints/$ENDPOINT_ID/cache")
 
     if [ "$HTTP_STATUS" = '200' ] || [ "$HTTP_STATUS" = '204' ]; then
-        echo 'Changes were successfully purged from DigitalOcean CDN'
         echo "$CHANGES"
+        echo 'All changes successfully purged from DigitalOcean CDN'
     else
         echo 'CDN purge failure'
     fi
