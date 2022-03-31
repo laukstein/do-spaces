@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 if [ -z "$DO_ACCESS" ]; then
   echo 'DO_ACCESS is not set. Quitting.'
   exit 1
@@ -57,30 +55,21 @@ host_base = ${ENDPOINT}
 host_bucket = %(bucket).${ENDPOINT}
 CONFIG
 
-# Update changes in DigitalOcean Space
-s3cmd --no-preserve --no-check-md5 --no-progress --recursive --exclude=.git ${DELETE_FLAG} ${ACCESS_FLAG} "$HEADER_FLAG" sync ${LOCAL_DIR} "s3://$DO_NAME/$SPACE_DIR"
+S3="s3://$DO_NAME/"
+UPDATES=$(s3cmd --no-preserve --no-check-md5 --no-progress --recursive --exclude=.git $DELETE_FLAG $ACCESS_FLAG "$HEADER_FLAG" sync $LOCAL_DIR "$S3$SPACE_DIR")
+echo 'Changes were successfully updated in DigitalOcean Space'
+echo "$UPDATES"
 
+CHANGES=$(echo "$UPDATES" | grep -Po "(?<=${S3})[^']*")
 
-# Purge changes from DigitalOcean CDN
-if [ -n "$DO_TOKEN" ]; then
-  if [ -z "$CHANGES" ]; then
-    echo 'Missing CHANGES to purge CDN cache.'
-    exit 1
-  fi
-fi
-if [ -n "$CHANGES" ]; then
-  if [ -z "$DO_TOKEN" ]; then
-    echo 'Missing DO_TOKEN to purge CDN cache.'
-    exit 1
-  fi
-
+if [ -n "$DO_TOKEN" ] && [ -n "$CHANGES" ]; then
   DO_FILES=''
-  REMOVE_PATH=${LOCAL_DIR#./}
   for file in ${CHANGES}; do
+      CHANGE=${file#"$S3"}
       if [ -n "$DO_FILES" ]; then
         DO_FILES="$DO_FILES,";
       fi
-      DO_FILES="$DO_FILES\"${file#"$REMOVE_PATH"}\""
+      DO_FILES="$DO_FILES\"$CHANGE\""
   done
 
   ENDPOINT_ID=$(curl -s -X GET \
@@ -96,7 +85,8 @@ if [ -n "$CHANGES" ]; then
       "https://api.digitalocean.com/v2/cdn/endpoints/$ENDPOINT_ID/cache")
 
     if [ "$HTTP_STATUS" = '200' ] || [ "$HTTP_STATUS" = '204' ]; then
-        echo 'CDN purge success'
+        echo 'Changes were successfully purged from DigitalOcean CDN'
+        echo "$CHANGES"
     else
         echo 'CDN purge failure'
     fi
