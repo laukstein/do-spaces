@@ -1,5 +1,5 @@
-name: "DigitalOcean Spaces"
-description: "Sync to DigitalOcean Spaces, purge changes from DigitalOcean CDN and from Cloudflare cache"
+name: "DigitalOcean Spaces Action"
+description: "Sync on DigitalOcean Spaces, purge changes from DigitalOcean CDN and Cloudflare cache."
 author: laukstein
 runs:
   using: "docker"

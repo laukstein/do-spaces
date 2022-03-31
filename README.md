@@ -1,8 +1,8 @@
-# DigitalOcean Spaces
+# DigitalOcean Spaces Action
 
-GitHub Action to sync to DigitalOcean Spaces.
+GitHub Action to sync on DigitalOcean Spaces, purge changes from DigitalOcean CDN and Cloudflare cache.
 
-⚠️ This action by default deletes all files in the space that are not present in `LOCAL_DIR`, disable it using `DELETE_UNTRACKED: false`.
+⚠️ Set `DELETE_UNTRACKED: false` if you wish to keep files in space that are not present in `LOCAL_DIR`.
 
 
 ### Usage
@@ -11,14 +11,14 @@ Setup this workflow action like `.github/workflows/<name_this>.yml`
 
 * Sync all repository
 ```yaml
-name: DigitalOcean Spaces
+name: DigitalOcean Spaces Action
 on: push
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@main
-      - name: Sync DigitalOcean Space
+      - name: Sync on DigitalOcean Space
         uses: laukstein/do-spaces@main
         env:
           DO_ACCESS: ${{ secrets.DO_ACCESS }}
@@ -29,7 +29,7 @@ jobs:
 
 * Sync directory /public and purge changes from DigitalOcean CDN
 ```yaml
-name: DigitalOcean Spaces
+name: DigitalOcean Spaces Action
 on:
   push:
     paths: public/**
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@main
         with:
           fetch-depth: 0
-      - name: Sync DigitalOcean Space and purge from CDN
+      - name: Sync on DigitalOcean Space, purge changes from DigitalOcean CDN
         uses: laukstein/do-spaces@main
         env:
           DO_TOKEN: ${{ secrets.DO_TOKEN }}
@@ -54,7 +54,7 @@ jobs:
 
 * Sync directory /public to https://cdn.mydomain.com/img/ and purge changes from DigitalOcean CDN and Cloudflare cache
 ```yaml
-name: DigitalOcean Spaces
+name: DigitalOcean Spaces Action
 on:
   push:
     paths: public/**
@@ -66,7 +66,7 @@ jobs:
         uses: actions/checkout@main
         with:
           fetch-depth: 0
-      - name: Sync DigitalOcean Space and purge from CDN and Cloudflare cache
+      - name: Sync on DigitalOcean Spaces, purge changes from DigitalOcean CDN and Cloudflare cache
         uses: laukstein/do-spaces@main
         env:
           DO_TOKEN: ${{ secrets.DO_TOKEN }}
