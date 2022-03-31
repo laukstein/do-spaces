@@ -60,7 +60,7 @@ else
   SPACE_DIR="$SPACE_DIR/"
 fi
 
-if [ -n "$CF_URL" ] && [ ${CF_URL:-1} != '/' ]; then
+if [ -n "$CF_URL" ] && [ "${CF_URL:-1}" != '/' ]; then
   CF_URL="$CF_URL/"
 else
   CF_URL='/'
@@ -99,7 +99,7 @@ for file in ${CHANGES}; do
 
     DO_FILES="$DO_FILES\"$CHANGE\""
     CF_URLS="$CF_URLS\"$CF_URL$CHANGE\""
-    URLS="$URLS\"$CF_URL$CHANGE\""
+    URLS="$URLS$CF_URL$CHANGE"
 done
 
 if [ -n "$DO_TOKEN" ]; then
@@ -155,7 +155,7 @@ if [ -n "$CF_ENABLED" ]; then
 
   if [ "$HTTP_STATUS" = '200' ]; then
      echo 'Changes successfully purged from Cloudflare cache:'
-     echo "$URLS"
+     printf "$URLS"
      exit 0
   else
      echo 'Cloudflare cache purge failed. API response:'
