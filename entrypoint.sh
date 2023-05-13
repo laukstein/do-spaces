@@ -54,10 +54,10 @@ else
   LOCAL_DIR="$LOCAL_DIR/"
 fi
 
-if [ -z "$SPACE_DIR" ]; then
-  SPACE_DIR=""
+if [ -z "$DO_DIR" ]; then
+  DO_DIR=""
 else
-  SPACE_DIR="$SPACE_DIR/"
+  DO_DIR="$DO_DIR/"
 fi
 
 if [ -n "$CF_URL" ] && [ "${CF_URL:-1}" != '/' ]; then
@@ -76,7 +76,7 @@ host_bucket = %(bucket).${ENDPOINT}
 CONFIG
 
 S3="s3://$DO_NAME/"
-UPDATES=$(s3cmd --no-preserve --no-check-md5 --no-progress --recursive --exclude=.git $DELETE_FLAG $ACCESS_FLAG $HEADER_FLAG sync $LOCAL_DIR $S3$SPACE_DIR)
+UPDATES=$(s3cmd --no-preserve --no-check-md5 --no-progress --recursive --exclude=.git $DELETE_FLAG $ACCESS_FLAG $HEADER_FLAG sync $LOCAL_DIR $S3$DO_DIR)
 DO_FILES=''
 CF_URLS=''
 echo 'Changes successfully updated in DigitalOcean Space:'
